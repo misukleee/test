@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.op.booktique.mapper.concert.ConcertMapper">
+
+<insert id="add" parameterType="com.op.booktique.vo.concert.ConcertVO">
+	insert into show(
+		SHOW_SQ,
+		SHOW_NAME,
+		MAIN_IMG,
+		SUB_IMG,
+		DETAIL_IMG,
+		SHOW_CAT
+	)
+	values(
+	    'C'||TO_CHAR(SYSDATE,'YYYYMMDD')||NVL(TRIM(TO_CHAR((SELECT MAX(TO_NUMBER(SUBSTR(show_sq,10)))+1 FROM show),'00000')), TRIM((TO_CHAR(1,'00000')))),
+	    #{showName},
+	    #{mainImg},
+	    #{subImg},
+	    #{detailImg},
+	    #{showCat}
+	)
+</insert>
+
+<select id="list" resultType="com.op.booktique.vo.concert.ConcertVO">
+	SELECT
+	    show_sq
+	  , main_img
+	  , sub_img
+	  , detail_img
+	  , show_name
+	FROM
+	    show
+	WHERE
+	    show_cat = '콘서트'
+</select>
+
+</mapper>

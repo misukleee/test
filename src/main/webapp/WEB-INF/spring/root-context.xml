@@ -1,0 +1,67 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+ 
+   <!-- Root Context: defines shared resources visible to all other web components -->
+   
+   <!-- 업로드 폴더 경로 설정 -->
+   <bean id="uploadFolder" class="java.lang.String">
+      <constructor-arg value="C:\\eGovFrameDev-3.10.0-64bit\\workspace\\springProj\\src\\main\\webapp\\resources"></constructor-arg>
+   </bean>
+
+   <!-- 업로드 폴더의 실제 경로 설정 -->
+   <bean id="uploadFolderDirect" class="java.lang.String">
+      <constructor-arg value="C:\\eGovFrameDev-3.10.0-64bit\\workspace\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\springProj\\resources\\upload"></constructor-arg>
+   </bean>
+
+   <!-- 데이터베이스 연결 설정 -->
+   <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+      <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+      <property name="url" value="jdbc:oracle:thin:@192.168.144.13:1521:xe" />
+      <property name="username" value="booktique" />
+      <property name="password" value="java" />
+   </bean>
+
+   <!-- MyBatis 설정 -->
+   <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+      <property name="dataSource" ref="dataSource"></property>
+      <property name="mapperLocations" value="classpath:/sqlmap/**/*_SQL.xml" />
+      <property name="configLocation" value="/WEB-INF/mybatisAlias/mybatisAlias.xml" />
+   </bean>
+   
+   <!-- MyBatis SQL 세션을 관리하는 템플릿 객체 설정 -->
+   <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+      <constructor-arg index="0" ref="sqlSessionFactory" />
+   </bean>
+   
+   <!-- Naver Mail SMTP 설정 -->
+   <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+       <property name="host" value="smtp.naver.com"/> <!-- 메일 서버 호스트 -->
+       <property name="port" value="465"/> <!-- 메일 서버 포트 -->
+       <property name="username" value="rosy_h"/> <!-- 네이버 이메일 계정 아이디 -->
+       <property name="password" value="devpro0315!"/> <!-- 네이버 이메일 계정 비밀번호 -->
+       <!-- 보안 연결 SSL과 관련된 설정 -->
+       <property name="javaMailProperties">
+        <props>
+           <prop key="mail.smtp.auth">true</prop>
+           <prop key="mail.smtp.starttls.enable">true</prop>
+           <prop key="mail.smtps.checkserveridentity">true</prop>
+           <prop key="mail.smtps.ssl.trust">*</prop>
+           <prop key="mail.debug">true</prop>
+           <prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>
+        </props>
+       </property>
+   </bean>
+   
+   <!-- Mapper 인터페이스 설정 
+   자동으로 Mapper 인터페이스를 활용하는 객체를 생성 -->
+   <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+       <property name="basePackage" value="com.op.booktique.mapper"/> <!-- 매퍼 인터페이스 패키지 -->
+   </bean>
+
+   <!-- 서비스 계층의 빈을 자동으로 스캔하여 등록 -->
+   <context:component-scan base-package="com.op.booktique.service.member"/>
+
+</beans>

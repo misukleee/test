@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+     
+    <!-- Custom AccessDeniedHandler -->
+    <bean id="customAccessDenied"
+          class="com.op.booktique.security.AccessDeniedHandlerImpl"></bean>
+         
+    <!-- Custom LoginSuccessHandler --> 
+    <bean id="customLoginSuccess"
+          class="com.op.booktique.security.LoginSuccessHandlerImpl"></bean>
+    
+    <!-- Custom UserDetailsService -->
+    <bean id="UserDetailsServiceImpl"
+          class="com.op.booktique.security.UserDetailsServiceImpl"></bean>     
+         
+    <!-- Password Encoder Bean -->
+    <bean id="passwordEncoder"
+          class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+    
+    <!-- Remember Me Token Repository Bean -->
+    <bean id="tokenRepository" 
+          class="org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl" />
+    
+    <!-- Security HTTP Configuration -->
+    <security:http>
+    
+        <!-- 폼 기반 인증 기능 사용 -->
+        <!-- 사용자 정의 로그인 페이지 사용 -->
+        <security:form-login login-page="/login" 
+                             authentication-success-handler-ref="customLoginSuccess" />
+
+        
+        <!-- Remember-Me 설정 -->
+        <security:remember-me 
+            token-repository-ref="tokenRepository"
+            key="myAppKey"
+            token-validity-seconds="604800" />    
+        
+        <!-- 로그아웃 설정 -->
+        <security:logout logout-url="/logout"
+                         logout-success-url="/main"
+                         invalidate-session="true"
+                         delete-cookies="JSESSION_ID" />
+        
+        <!-- 사용자 정의 접근 거부 처리자 -->
+        <security:access-denied-handler ref="customAccessDenied" />
+    </security:http>
+    
+    <!-- 인증 관리자 설정 -->
+    <security:authentication-manager>
+        <!-- 지정된 아이디와 패스워드로 로그인이 가능하도록 설정함 -->
+        <security:authentication-provider user-service-ref="UserDetailsServiceImpl">
+            <security:password-encoder ref="passwordEncoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+</beans>
