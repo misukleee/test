@@ -22,13 +22,14 @@ public class ConcertController {
 	private ConcertService concertService;
 	
 	@GetMapping("/main")
-	public String mainPage(Model model) {
+//	public String mainPage(Model model) {
+	public String mainPage() {
 		
 		log.debug("콘서트 메인 페이지 이동");
 		
-		List<ConcertVO> concertList = concertService.list();
+//		List<ConcertVO> concertList = concertService.list();
 		
-		model.addAttribute("allList",concertList);
+//		model.addAttribute("allList",concertList);
 		
 		return "concert/main";
 	}
