@@ -31,6 +31,8 @@ public class ConcertController {
 		
 //		model.addAttribute("allList",concertList);
 		
+		System.out.println("dkfjdlkfjslkdfjlskdjf");
+		
 		return "concert/main";
 	}
 
